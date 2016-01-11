@@ -1,0 +1,40 @@
+package camelcoredemo;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+
+public class KafkaTest {
+
+    public static void main(String args[]) throws Exception {
+    	CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+            	//from("kafka:localhost:9092?topic=test&zookeeperHost=localhost&zookeeperPort=2181")
+            	from("kafka:10.66.136.210:9092,10.66.136.211:9092,10.66.136.214:9092?topic=javatest&groupId=camel-test&autoOffsetReset=smallest&zookeeperHost=10.66.136.210,"
+            			+ "10.66.136.211,10.66.136.214&zookeeperPort=2181")
+            			//&groupId=camel-test
+            			//?groupId=camel-test
+            	.process(new Processor() {
+                    //@Override
+                    public void process(Exchange exchange) throws Exception {
+                    	//System.out.println(exchange.getIn().getBody()); //[B@5e0627bc
+                    	//System.out.println(exchange.getExchangeId());   //ID-acbc327fc3a1-50304-1452544918318-0-2
+                    	//System.out.println(exchange.getFromRouteId());  //route1
+                        //System.out.println(exchange.getIn().getBody().getClass()); //class [B
+                    	System.out.println(exchange.toString()); 		  //Exchange[Message: Test message from java program - hello 1/11/16 2:55 PM]
+                    	//System.out.println(exchange.getFromEndpoint()); //Endpoint[kafka://10.66.136.210:9092,10.66.136.211:9092,10.66.136.214:9092?autoOffsetReset=smallest&groupId=camel-test&topic=javatest&zookeeperHost=10.66.136.210%2C10.66.136.211%2C10.66.136.214&zookeeperPort=2181]
+                    }
+                })
+                .end();
+            }
+        });
+
+        context.start();
+        while (true) {
+
+        }
+    }
+}
